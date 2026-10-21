@@ -22,7 +22,7 @@ with sync_playwright() as p:
     pg.on("console", lambda m: m.type == "error" and "ERR_FAILED" not in m.text and report["errors"].append(m.text))
     pg.goto(wrapped.as_uri())
     pg.wait_for_timeout(300)
-    report["it_count"] = pg.inner_text("#shown")
+    report["it_count"] = pg.inner_text("#summary b")
     pg.screenshot(path=str(shots / "desk-light.png"))
     for sec in ("it", "devsecops"):
         pg.click(f'.seg button[data-sec="{sec}"]')
@@ -41,11 +41,11 @@ with sync_playwright() as p:
     pg.click('.seg button[data-sec="it"]')
     pg.fill("#q", "lvextend")
     pg.wait_for_timeout(300)
-    report["search_lvextend"] = pg.inner_text("#shown")
+    report["search_lvextend"] = pg.inner_text("#summary b")
     pg.fill("#q", "")
     pg.wait_for_timeout(300)
     pg.click('#topics .chip:nth-child(2)')
-    report["topic_click"] = pg.inner_text("#shown")
+    report["topic_click"] = pg.inner_text("#summary b")
     # a note with a script
     pg.click('#topics .chip:first-child')
     pg.evaluate("location.hash = \"p182\"")

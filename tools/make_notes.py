@@ -38,7 +38,8 @@ for _n, _pairs in FIXES.items():
     for _p in posts:
         if _p["n"] == _n:
             _p["text"] = _fix(_p["text"], _pairs)
-SCRIPTS = {f.name: f for f in SRC.glob("*/*/Scripts/*.py")}
+SCRIPTS = {f.name: f for pat in ("*/*/Scripts/*.py", "*/*/Scripts/*.sh") for f in SRC.glob(pat)}
+SCRIPT_LANG = {".py": "python", ".sh": "bash"}
 
 
 # ---------------------------------------------------------------- markdown helpers
@@ -191,7 +192,8 @@ def quickref(sp, known):
     elif L == "code":
         run, output = sp.get("run"), sp.get("output") or []
         if sp.get("pyfile"):
-            out.append(f"The full script is at the end of this note: **{sp['pyfile']}** (standard library only, no `pip install`).")
+            what = "plain Bash and standard Linux tools" if sp["pyfile"].endswith(".sh") else "standard library only, no `pip install`"
+            out.append(f"The full script is at the end of this note: {code_span(sp['pyfile'])} ({what}).")
         if run:
             out.append("**Run it**")
             out.append(block([run], "bash"))
@@ -393,7 +395,7 @@ for p in posts:
     sp = specs[str(n)]
     topic, sections = ASSIGN[n]
     if sp["layout"] == "code":
-        assert topic == "Python scripts", n
+        assert topic == ("Shell scripts" if sp.get("pyfile", "").endswith(".sh") else "Python scripts"), n
     known = known_cmds(sp)
     end = sp.get("end") or {}
     end_line = (end.get("line") or "").replace("\n", " ").strip()
@@ -441,7 +443,7 @@ for p in posts:
     script_name = sp.get("pyfile")
     if script_name and script_name in SCRIPTS:
         code = SCRIPTS[script_name].read_text(encoding="utf-8").rstrip()
-        md += [f"## Script: {script_name}", "", f"Download: [scripts/{script_name}](../scripts/{script_name})", "", block(code.splitlines(), "python"), ""]
+        md += [f"## Script: {script_name}", "", f"Download: [scripts/{script_name}](../scripts/{script_name})", "", block(code.splitlines(), SCRIPT_LANG[pathlib.Path(script_name).suffix]), ""]
     text = "\n".join(md).rstrip() + "\n"
     fname = f"p{n:03d}-{slug}.md"
     (OUT / "notes" / fname).write_text(text, encoding="utf-8")

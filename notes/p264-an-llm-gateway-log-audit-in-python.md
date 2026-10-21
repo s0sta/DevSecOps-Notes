@@ -17,7 +17,7 @@ Every prompt through your gateway becomes a log line, and most teams keep those 
 
 ## Quick reference
 
-The full script is at the end of this note: **llm_audit.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `llm_audit.py` (standard library only, no `pip install`).
 
 **Run it**
 

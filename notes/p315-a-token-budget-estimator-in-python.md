@@ -17,7 +17,7 @@ Prompt work stops at the invoice. Someone asks what the feature costs a month, a
 
 ## Quick reference
 
-The full script is at the end of this note: **token_budget.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `token_budget.py` (standard library only, no `pip install`).
 
 **Run it**
 

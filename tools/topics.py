@@ -5,7 +5,9 @@ TOPICS = {
     "DB": "Databases & SQL", "DO": "DevOps basics", "CI": "Git & CI/CD", "DK": "Docker & containers", "K8": "Kubernetes",
     "IA": "Terraform, Ansible & IaC", "CL": "Cloud: AWS & Azure", "GO": "GitOps & Helm", "OB": "Observability & SRE",
     "PL": "Platform engineering", "CS": "DevSecOps & cloud security", "AI": "AI infrastructure & LLM security",
-    "DA": "Data engineering", "PY": "Python scripts",
+    "DA": "Data engineering", "PY": "Python scripts", "SH": "Shell scripts",
+    "AP": "Application & API security", "SC": "Supply chain & SBOM", "VM": "Vulnerability management & attack surface",
+    "IR": "Incident response & detection", "RE": "Release & build engineering",
 }
 RAW = """
 72 WE i|73 L i|74 L i|75 L i|76 L i|77 L i|78 L i|79 L b|80 L i|81 SE b|82 WE i|83 ST i|84 WE b|85 BK i|86 ST i|87 NE i|88 L i|89 OP b|90 L b|91 OP i
@@ -26,6 +28,38 @@ RAW = """
 331 DB i|332 DB i|333 DB i|334 DB i|335 PY i|336 DB i|337 DB i|338 DB i|339 DB i|340 PY i|341 DB i|342 DB i|343 DB i|344 DB i|345 PY i|346 DB i|347 DB i
 348 DB i|349 DB i|350 PY i|351 DB i|352 DA d|353 DA d|354 DA d|355 PY d|356 DA d|357 DA d|358 DA d|359 DA d|360 PY d|361 DA d|362 DA d|363 DA d|364 DA d
 365 PY d|366 DA d|367 DA d|368 DA d|369 DA d|370 PY d|371 DA d
+372 CS d|373 AP d|374 AP d|375 AP d|376 AP d|377 PY d|378 VM d|379 CS d|380 VM d|381 CS d|382 SC d|383 CS d|384 AP d|385 AP d|386 SC d
+387 PY d|388 SC d|389 SC d|390 VM d|391 SC d|392 CI d|393 CI d|394 IA d|395 CI d|396 PY d|397 PY d|398 SC d|399 CI d|400 CI d|401 CI d
+402 AP d|403 AP d|404 AP d|405 AP d|406 PY d|407 AP d|408 AP d|409 AP d|410 AP d|411 AP d|412 IR d|413 IR d|414 IR d|415 PY d|416 PY d
+417 IR d|418 IR d|419 CS d|420 IR d|421 IR d
+422 RE d|423 RE d|424 RE d|425 PY d|426 PY d|427 RE d|428 RE d|429 RE d|430 RE d|431 RE d|432 RE d|433 RE d|434 RE d|435 PY d|436 PY d
+437 RE d|438 RE d|439 RE d|440 RE d|441 RE d|442 DO d|443 DO d|444 DO d|445 PY d|446 PY d|447 DO d|448 DO d|449 DO d|450 DO d|451 DO d
+452 OB d|453 OB d|454 OB d|455 PY d|456 PY d|457 OB d|458 OB d|459 OB d|460 OB d|461 OB d|462 PL d|463 CI d|464 PL d|465 PY d|466 PY d
+467 CI d|468 PL d|469 CI d|470 PL d|471 PL d
+472 NE b|473 NE b|474 PY b|475 PY b|476 WE b|477 NE b|478 NE b|479 NE b|480 NE b|481 NE b|482 NE b|483 NE b|484 NE b|485 PY b|486 PY b
+487 NE b|488 NE b|489 NE b|490 NE b|491 NE b|492 CL d|493 CL d|494 CL d|495 PY d|496 PY d|497 CL d|498 CL d|499 CL d|500 CL d|501 CL d
+502 K8 d|503 K8 d|504 K8 d|505 PY d|506 PY b|507 K8 d|508 K8 d|509 K8 d|510 K8 d|511 K8 d|512 NE b|513 NE b|514 NE b|515 PY b|516 PY b
+517 NE b|518 NE b|519 NE b|520 NE b|521 NE b
+522 CS d|523 PY d|524 CS d|525 PY b|526 PY b|527 CS d|528 PY d|529 PY b|530 PY b|531 CS d|532 SC d|533 SC d|534 SC d|535 PY d|536 PY d
+537 SC d|538 SC d|539 PY d|540 PY d|541 SC d|542 CS d|543 CL d|544 CS d|545 PY d|546 PY d|547 CS d|548 K8 d|549 PY d|550 PY d|551 CS d
+552 AP d|553 AP b|554 AP b|555 PY d|556 PY d|557 AP d|558 PY d|559 PY d|560 AP b|561 AP d|562 CS d|563 CS d|564 CS d|565 PY d|566 PY d
+567 CS d|568 CS d|569 PY d|570 PY d|571 CS d
+572 PY b|573 PY b|574 PY b|575 PY b|576 PY b|577 OP b|578 L b|579 L b|580 OP b|581 L b|582 PY b|583 PY d|584 PY b|585 PY b|586 PY b
+587 SE b|588 SE b|589 SE b|590 SE b|591 SE b|592 PY d|593 PY d|594 PY d|595 PY d|596 PY d|597 K8 d|598 K8 d|599 K8 d|600 K8 d|601 K8 d
+602 PY d|603 PY d|604 PY d|605 PY d|606 PY d|607 CI d|608 CI d|609 CI d|610 CI d|611 CI d|612 PY b|613 PY b|614 PY d|615 PY b|616 PY d
+617 BK b|618 BK b|619 CL d|620 BK b|621 BK b
+622 SH b|623 SH b|624 SH b|625 SH b|626 SH b|627 L b|628 L b|629 L b|630 L b|631 L b|632 SH b|633 SH b|634 SH b|635 SH b|636 SH b
+637 SE b|638 SE b|639 SE b|640 SE b|641 SE b|642 SH d|643 SH d|644 SH d|645 SH d|646 SH d|647 CI d|648 CI d|649 CI d|650 CI d|651 CI d
+652 SH b|653 SH b|654 SH b|655 SH b|656 SH b|657 SE b|658 SE b|659 SE b|660 SE b|661 SE b|662 SH b|663 SH b|664 SH b|665 SH b|666 SH b
+667 OP b|668 L b|669 OP b|670 L b|671 L b
+672 PY b|673 PY b|674 PY b|675 PY b|676 PY b|677 IR b|678 IR b|679 IR b|680 IR b|681 IR b|682 PY b|683 PY b|684 PY b|685 PY b|686 PY b
+687 IR b|688 IR b|689 IR b|690 IR b|691 IR b|692 PY b|693 PY b|694 PY b|695 PY b|696 PY b|697 IR b|698 IR b|699 IR b|700 IR b|701 IR b
+702 PY b|703 PY b|704 PY b|705 PY b|706 PY b|707 IR b|708 IR b|709 IR b|710 IR b|711 IR b|712 PY b|713 PY b|714 PY b|715 PY b|716 PY b
+717 IR b|718 IR b|719 IR b|720 IR b|721 IR b
+722 PY d|723 PY d|724 PY d|725 PY d|726 PY d|727 VM d|728 VM d|729 VM d|730 VM d|731 VM d|732 PY d|733 PY d|734 PY d|735 PY d|736 PY d
+737 VM d|738 VM d|739 VM d|740 VM d|741 VM d|742 PY d|743 PY d|744 PY d|745 PY d|746 PY d|747 VM d|748 VM d|749 VM d|750 VM d|751 VM d
+752 PY d|753 PY d|754 PY d|755 PY d|756 PY d|757 VM d|758 VM d|759 VM d|760 VM d|761 VM d|762 PY d|763 PY d|764 PY d|765 PY d|766 PY d
+767 VM d|768 VM d|769 VM d|770 VM d|771 VM d
 """
 SEC = {"i": ["it"], "d": ["devsecops"], "b": ["it", "devsecops"]}
 ASSIGN = {}
@@ -35,5 +69,5 @@ for item in RAW.replace("\n", "|").split("|"):
         continue
     n, t, s = item.split()
     ASSIGN[int(n)] = (TOPICS[t], SEC[s])
-# Posts 72-371 are in RAW above. For new posts add "number topic section" items (section: i, d or b).
+# Posts 72-771 are in RAW above. For new posts add "number topic section" items (section: i, d or b).
 assert all(72 <= n for n in ASSIGN), "post numbers start at 72"

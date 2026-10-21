@@ -17,7 +17,7 @@ You run `kubectl get pods -A -o json` and get a page of JSON. Somewhere in it ar
 
 ## Quick reference
 
-The full script is at the end of this note: **gpu_audit.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `gpu_audit.py` (standard library only, no `pip install`).
 
 **Run it**
 

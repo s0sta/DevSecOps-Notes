@@ -17,7 +17,7 @@ A vulnerability report that nobody fails a build on is just a file. Trivy can pr
 
 ## Quick reference
 
-The full script is at the end of this note: **trivy_gate.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `trivy_gate.py` (standard library only, no `pip install`).
 
 **Run it**
 

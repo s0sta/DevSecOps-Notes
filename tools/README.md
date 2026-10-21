@@ -11,11 +11,12 @@ They read the GIF builder files with Python's `ast` module and never run them. G
 | `base.py` | Reads `Texts/pNNN.txt` and the dates in `*_All_Posts.md` into `posts.json` |
 | `topics.py` | The topic and section of every post: `i` = IT, `d` = DevSecOps, `b` = both |
 | `codeutil.py` | Finds commands inside text, so they become code |
-| `make_notes.py` | Writes `notes/*.md`, copies `scripts/*.py`, writes `index.json` |
+| `make_notes.py` | Writes `notes/*.md`, copies `scripts/*.py` and `scripts/*.sh`, writes `index.json` |
 | `check_md.py` | Renders every note and lists Markdown problems |
 | `publish.py` | Copies each note into the repo of its section (both = both repos) and refreshes both READMEs |
 | `make_readme.py` | Writes one repo's README from the notes that are in it |
 | `build_preview.py` + `preview_template.html` | One HTML page to read, search and copy all notes |
+| `notes_tech.js` | Finds the tech in each note for the search filters: ports, protocols, cloud services, Kubernetes objects, standards, DNS records, HTTP status codes, Windows event IDs, MITRE ATT&CK, CVE, paths |
 | `test_preview.py`, `test_search.py` | Click through the preview page, try many searches, take screenshots |
 
 ## Add new posts

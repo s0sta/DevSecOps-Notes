@@ -17,7 +17,7 @@ The VPC is built, the peering is up, and then someone notices the new subnet sit
 
 ## Quick reference
 
-The full script is at the end of this note: **subnet_plan.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `subnet_plan.py` (standard library only, no `pip install`).
 
 **Run it**
 

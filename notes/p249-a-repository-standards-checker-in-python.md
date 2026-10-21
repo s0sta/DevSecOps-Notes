@@ -17,7 +17,7 @@ Every new service starts with good intentions and an empty repo. Six weeks later
 
 ## Quick reference
 
-The full script is at the end of this note: **repo_standards.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `repo_standards.py` (standard library only, no `pip install`).
 
 **Run it**
 

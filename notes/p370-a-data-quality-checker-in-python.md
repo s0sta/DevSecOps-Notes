@@ -17,7 +17,7 @@ The nightly load finished at 02:14 and the table was empty. Nothing raised an er
 
 ## Quick reference
 
-The full script is at the end of this note: **data_quality.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `data_quality.py` (standard library only, no `pip install`).
 
 **Run it**
 

@@ -17,7 +17,7 @@ One consumer group is three days behind and the dashboard is green. `kafka-consu
 
 ## Quick reference
 
-The full script is at the end of this note: **consumer_lag.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `consumer_lag.py` (standard library only, no `pip install`).
 
 **Run it**
 

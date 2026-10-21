@@ -17,7 +17,7 @@ A tag policy that lives in a wiki is a suggestion. A tag check that fails the pi
 
 ## Quick reference
 
-The full script is at the end of this note: **tf_tag_audit.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `tf_tag_audit.py` (standard library only, no `pip install`).
 
 **Run it**
 

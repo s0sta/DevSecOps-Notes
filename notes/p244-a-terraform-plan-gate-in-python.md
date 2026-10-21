@@ -17,7 +17,7 @@ A Terraform plan is a wall of text, and the one line that matters is often a del
 
 ## Quick reference
 
-The full script is at the end of this note: **tf_plan_gate.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `tf_plan_gate.py` (standard library only, no `pip install`).
 
 **Run it**
 

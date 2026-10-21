@@ -223,6 +223,18 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
 .tags { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
 .tags button { border: 0; background: transparent; padding: 0; font: 500 12px/1.4 var(--font-mono); color: var(--muted); }
 .tags button:hover { color: var(--accent); }
+.techrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; align-items: center; }
+.techrow .lg2 { font: 600 10.5px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.techrow button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 4px 10px; font-size: 12.5px; display: inline-flex; gap: 6px; align-items: center; max-width: 100%; overflow-wrap: anywhere; text-align: left; }
+.techrow button .k { font: 600 10px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-2); }
+.techrow button:hover { border-color: var(--accent); }
+.techrow .more { border-style: dashed; color: var(--muted); }
+.tk { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 10px; }
+.tk button { border: 0; background: transparent; color: var(--band-muted); border-radius: 8px; padding: 6px 9px; font-size: 13px; font-weight: 600; display: inline-flex; gap: 6px; align-items: center; }
+.tk button small { font: 500 11px/1 var(--font-mono); opacity: .8; }
+.tk button[aria-pressed="true"] { background: var(--band-glass); color: var(--band-fg); box-shadow: inset 0 0 0 1px var(--band-line); }
+.tfind { width: min(100%, 260px); margin: 0 0 10px; border: 1px solid var(--band-line); background: var(--band-glass); color: var(--band-fg); border-radius: 10px; padding: 7px 11px; font-size: 13px; }
+.tfind::placeholder { color: var(--band-muted); }
 .empty-note { color: var(--muted); display: grid; gap: 10px; justify-items: start; }
 
 /* rendered markdown */
@@ -308,7 +320,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       <div class="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="q" type="search" role="combobox" aria-label="Search notes" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list"
-          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Search · @tool · #code · --option · topic:">
+          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Search · @tool · #code · --option · port:443 · topic:">
         <kbd class="kbd" id="kbd" aria-hidden="true">/</kbd>
         <button type="button" class="clear" id="clear" data-act="clearq" aria-label="Clear search" hidden>×</button>
         <ul id="sugg" class="sugg" role="listbox" aria-label="Suggestions" hidden></ul>
@@ -325,7 +337,9 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       <button type="button" class="ex" data-act="ex" data-ex="--force">--force</button>
       <button type="button" class="ex" data-act="ex" data-ex="topic:linux has:commands">topic:linux has:commands</button>
       <button type="button" class="ex" data-act="ex" data-ex="&quot;disk full&quot;">"disk full"</button>
-      <button type="button" class="ex" data-act="ex" data-ex="@helm OR @kustomize">@helm OR @kustomize</button>
+      <button type="button" class="ex" data-act="ex" data-ex="port:443">port:443</button>
+      <button type="button" class="ex" data-act="ex" data-ex="tech:ssh">tech:ssh</button>
+      <button type="button" class="ex" data-act="ex" data-ex="path:/etc/ssh">path:/etc/ssh</button>
     </div>
     <div class="active" id="active" hidden></div>
 
@@ -336,8 +350,9 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
         <div class="fs"><p class="lg">Sections</p><div class="opts" id="f-in"></div></div>
         <div class="fs wide"><p class="lg">Note type</p><div class="opts" id="f-type"></div></div>
         <div class="fs"><p class="lg">Series</p><div class="opts" id="f-series"></div></div>
-        <div class="fs"><p class="lg">Post number</p><div class="range"><label>From P<input id="p-from" type="number" inputmode="numeric" min="1" placeholder="72"></label><label>to P<input id="p-to" type="number" inputmode="numeric" min="1" placeholder="371"></label></div></div>
-        <div class="fs"><p class="lg">LinkedIn date</p><div class="range"><label>From<input id="d-from" type="month" placeholder="2027-03"></label><label>to<input id="d-to" type="month" placeholder="2028-12"></label></div></div>
+        <div class="fs"><p class="lg">Post number</p><div class="range"><label>From P<input id="p-from" type="number" inputmode="numeric" min="1" placeholder="__FIRST__"></label><label>to P<input id="p-to" type="number" inputmode="numeric" min="1" placeholder="__LAST__"></label></div></div>
+        <div class="fs wide"><p class="lg">Tech: ports, protocols, cloud, Kubernetes, paths…</p><div class="tk" id="f-tk" role="group" aria-label="Kind of tech"></div>
+          <input class="tfind" id="tfind" type="search" placeholder="Find in this list" autocomplete="off" spellcheck="false" aria-label="Find in the tech list"><div class="opts" id="f-tech"></div></div>
         <div class="fs wide"><p class="lg">Popular hashtags</p><div class="opts" id="f-tag"></div></div>
       </div>
       <div class="panel-foot"><span>Every filter is also written in the search box. You can edit it there.</span><button type="button" class="gbtn" data-act="reset">Reset all filters</button></div>
@@ -355,11 +370,19 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
           <tr><td>topic:</td><td>A topic</td><td><button type="button" class="ex" data-act="ex" data-ex="topic:kubernetes">topic:kubernetes</button></td></tr>
           <tr><td>type:</td><td>A note type: commands, checklist, quiz…</td><td><button type="button" class="ex" data-act="ex" data-ex="type:checklist">type:checklist</button></td></tr>
           <tr><td>tag:</td><td>A LinkedIn hashtag</td><td><button type="button" class="ex" data-act="ex" data-ex="tag:sysadmin">tag:sysadmin</button></td></tr>
-          <tr><td>series:</td><td>linux, linux-it, it, cloud, platform, visual, data</td><td><button type="button" class="ex" data-act="ex" data-ex="series:data">series:data</button></td></tr>
+          <tr><td>series:</td><td>A post series: linux, network, ir, asm…</td><td><button type="button" class="ex" data-act="ex" data-ex="series:network">series:network</button></td></tr>
           <tr><td>in:</td><td>it, devsecops or both</td><td><button type="button" class="ex" data-act="ex" data-ex="in:both">in:both</button></td></tr>
           <tr><td>has:</td><td>script, commands, quiz, table</td><td><button type="button" class="ex" data-act="ex" data-ex="has:script">has:script</button></td></tr>
           <tr><td>p:</td><td>Post numbers</td><td><button type="button" class="ex" data-act="ex" data-ex="p:72-120">p:72-120</button></td></tr>
-          <tr><td>date:</td><td>LinkedIn date</td><td><button type="button" class="ex" data-act="ex" data-ex="date:2027-03..2027-08">date:2027-03..2027-08</button></td></tr>
+          <tr><td>port:</td><td>A port number or a range. port:ssh also works</td><td><button type="button" class="ex" data-act="ex" data-ex="port:443">port:443</button></td></tr>
+          <tr><td>proto:</td><td>A protocol: tcp, dns, tls, ssh, oidc…</td><td><button type="button" class="ex" data-act="ex" data-ex="proto:tls">proto:tls</button></td></tr>
+          <tr><td>svc:</td><td>A cloud service: s3, iam, vpc, cloudtrail…</td><td><button type="button" class="ex" data-act="ex" data-ex="svc:cloudtrail">svc:cloudtrail</button></td></tr>
+          <tr><td>k8s:</td><td>A Kubernetes object: pod, ingress, networkpolicy…</td><td><button type="button" class="ex" data-act="ex" data-ex="k8s:networkpolicy">k8s:networkpolicy</button></td></tr>
+          <tr><td>std:</td><td>A standard: owasp, cis, cvss, sbom, kev…</td><td><button type="button" class="ex" data-act="ex" data-ex="std:cvss">std:cvss</button></td></tr>
+          <tr><td>dns: http: event:</td><td>A DNS record type, an HTTP status (or 5xx), a Windows event ID</td><td><button type="button" class="ex" data-act="ex" data-ex="http:5xx">http:5xx</button></td></tr>
+          <tr><td>cve: mitre:</td><td>A CVE or a MITRE ATT&amp;CK ID</td><td><button type="button" class="ex" data-act="ex" data-ex="mitre:t1059">mitre:t1059</button></td></tr>
+          <tr><td>path:</td><td>A file or folder path (the start is enough)</td><td><button type="button" class="ex" data-act="ex" data-ex="path:/var/log">path:/var/log</button></td></tr>
+          <tr><td>tech:</td><td>Any of these: a port, protocol, service, path…</td><td><button type="button" class="ex" data-act="ex" data-ex="tech:ssh">tech:ssh</button></td></tr>
           <tr><td>!</td><td>Without this</td><td><button type="button" class="ex" data-act="ex" data-ex="@kubectl !@helm">@kubectl !@helm</button></td></tr>
           <tr><td>OR</td><td>One or the other</td><td><button type="button" class="ex" data-act="ex" data-ex="@helm OR @kustomize">@helm OR @kustomize</button></td></tr>
           <tr><td>a b</td><td>Two filters together: both must match</td><td><button type="button" class="ex" data-act="ex" data-ex="topic:kubernetes --dry-run">topic:kubernetes --dry-run</button></td></tr>
@@ -378,7 +401,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       <span id="summary"></span>
       <label class="sort"><span>Sort</span><select id="sort">
         <option value="best">Best match</option>
-        <option value="order">LinkedIn order</option>
+        <option value="order">Post order</option>
         <option value="recent">Last posts first</option>
         <option value="az">Title A–Z</option>
       </select></label>
@@ -391,6 +414,9 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
 
 <script type="application/json" id="notes-data">__DATA__</script>
 <script type="application/json" id="tools-data">__TOOLS__</script>
+<script>
+__TECHJS__
+</script>
 <script>
 (function () {
   "use strict";
@@ -410,12 +436,25 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     quiz: ["quiz", "Quiz"], numbers: ["numbers", "Numbers"], compare: ["compare", "Compare"], matrix: ["matrix", "Matrix"], stack: ["layers", "Layers"],
     dashboard: ["dashboard", "Dashboard"], timeline: ["timeline", "Timeline"], reveal: ["terms", "Terms"], architecture: ["architecture", "Architecture"],
     explainer: ["explainer", "Explainer"] };
-  var SERIES = { "Linux": "linux", "Linux + IT": "linux-it", "IT": "it", "Cloud / DevSecOps": "cloud", "Platform": "platform", "Visual": "visual", "Data": "data" };
+  var SERIES = { "Linux": "linux", "Linux + IT": "linux-it", "IT": "it", "Cloud / DevSecOps": "cloud", "Platform": "platform", "Visual": "visual", "Data": "data",
+    "DevSecOps": "devsecops", "DevOps": "devops", "Network": "network", "PythonSec": "python-sec", "PythonFixes": "python-fixes", "ShellSec": "shell-sec",
+    "IR": "ir", "ASM": "asm" };
+  var SERIES_LABEL = { "PythonSec": "Python security", "PythonFixes": "Python fixes", "ShellSec": "Shell security", "IR": "Incident response", "ASM": "Attack surface" };
+  var TX = NOTES_TECH, TKINDS = TX.KINDS.map(function (k) { return k[0]; }), TKNAME = {};
+  TX.KINDS.forEach(function (k) { TKNAME[k[0]] = k[1]; });
   var HAS = { script: "Script", commands: "Commands", quiz: "Quiz", table: "Table" };
-  var FIELD = { topic: "topic", type: "type", tag: "tag", series: "series", "in": "in", is: "in", has: "has", p: "p", post: "p", date: "date" };
-  var FIELD_NAME = { topic: "Topic", type: "Type", tag: "Tag", series: "Series", "in": "Section", has: "Has", p: "Post", date: "Date" };
-  var FIELD_HINT = { topic: "a topic", type: "commands, checklist, quiz…", tag: "a LinkedIn hashtag", series: "linux, it, cloud, data…", "in": "it, devsecops, both",
-    has: "script, commands, quiz, table", p: "post numbers, like p:72-120", date: "LinkedIn date, like date:2027-03" };
+  var FIELD = { topic: "topic", type: "type", tag: "tag", series: "series", "in": "in", is: "in", has: "has", p: "p", post: "p",
+    port: "port", ports: "port", proto: "proto", protocol: "proto", svc: "svc", service: "svc", cloud: "svc", k8s: "k8s", kube: "k8s", std: "std", standard: "std",
+    dns: "dns", http: "http", status: "http", event: "event", eventid: "event", mitre: "mitre", attack: "mitre", cve: "cve", path: "path", file: "path", tech: "tech" };
+  var FIELD_NAME = { topic: "Topic", type: "Type", tag: "Tag", series: "Series", "in": "Section", has: "Has", p: "Post",
+    port: "Port", proto: "Protocol", svc: "Cloud service", k8s: "Kubernetes", std: "Standard", dns: "DNS record", http: "HTTP status", event: "Windows event",
+    mitre: "MITRE ATT&CK", cve: "CVE", path: "Path", tech: "Tech" };
+  var FIELD_HINT = { topic: "a topic", type: "commands, checklist, quiz…", tag: "a hashtag", series: "linux, network, ir, asm…", "in": "it, devsecops, both",
+    has: "script, commands, quiz, table", p: "post numbers, like p:72-120", port: "22, 443, 5432 or 8000-8999", proto: "tcp, dns, tls, ssh…",
+    svc: "s3, iam, vpc, cloudtrail…", k8s: "pod, ingress, networkpolicy…", std: "owasp, cis, cvss, sbom…", dns: "a, cname, mx, txt…", http: "403, 503 or 5xx",
+    event: "4624, 4625, 4688…", mitre: "t1059…", cve: "2024-3094…", path: "/etc/ssh, /var/log…", tech: "any port, protocol, service, path…" };
+  var FIELD_SHOW = ["topic", "type", "tag", "series", "in", "has", "p", "port", "proto", "svc", "k8s", "std", "dns", "http", "event", "mitre", "cve", "path", "tech"];
+  var FIELD_RE = /^([A-Za-z][A-Za-z0-9]*):(.*)$/;
   var ORF = { topic: 1, type: 1, series: 1 };          // one value per note: several values mean "any of them"
   var CMDLET = /^[A-Z][a-z]+-[A-Z][A-Za-z]+$/;
   var OPT_RE = /(?:^|[\s"'(=,[])(--?[A-Za-z][\w-]*)/g;
@@ -500,6 +539,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     n._all = [n._title, n._text, n._code, n._tagstr, n._topic, n._type[1].toLowerCase()].join("\n");
     n._tools.forEach(function (t) { ALLTOOLS[t] = 1; });
     n._tags.forEach(function (t) { ALLTAGS[t] = 1; });
+    n._tech = TX.extract(plain, code.join("\n"), { topic: n.topic, tags: n.tags, tools: n._tools });
   });
 
   /* ================================================================ query language */
@@ -531,7 +571,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       else if (s[0] === "#") { tk.kind = "code"; tk.value = unq(s.slice(1)).toLowerCase(); }
       else if (/^--?$/.test(s)) { tk.kind = "opt"; tk.value = ""; }
       else if (/^--[A-Za-z0-9]/.test(s) || /^-[A-Za-z]/.test(s)) { tk.kind = "opt"; tk.value = s; }
-      else if ((m = /^([A-Za-z]+):(.*)$/.exec(s)) && FIELD[m[1].toLowerCase()]) { tk.kind = "field"; tk.field = FIELD[m[1].toLowerCase()]; tk.value = unq(m[2]).toLowerCase(); }
+      else if ((m = FIELD_RE.exec(s)) && FIELD[m[1].toLowerCase()]) { tk.kind = "field"; tk.field = FIELD[m[1].toLowerCase()]; tk.value = unq(m[2]).toLowerCase(); }
       else { tk.kind = "text"; tk.value = unq(s).toLowerCase(); }
       if (!tk.value) tk.empty = true;
       else if (tk.kind === "text") { tk.re = wordRe(tk.value, ""); tk.reG = wordRe(tk.value, "g"); }
@@ -556,20 +596,9 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     if ((m = /^(>=|<=|>|<)(\d+)$/.exec(v))) return m[1] === ">=" ? x >= +m[2] : m[1] === "<=" ? x <= +m[2] : m[1] === ">" ? x > +m[2] : x < +m[2];
     return /^\d+$/.test(v) && x === +v;
   }
-  function dnorm(s, end) {
-    if (/^\d{4}$/.test(s)) return s + (end ? "-12-31" : "-01-01");
-    if (/^\d{4}-\d{2}$/.test(s)) return s + (end ? "-31" : "-01");
-    return s;
-  }
-  function dateMatch(d, v) {
-    if (!d) return false;
-    var m;
-    if ((m = /^([\d-]+)\.\.([\d-]+)$/.exec(v))) return d >= dnorm(m[1], false) && d <= dnorm(m[2], true);
-    if ((m = /^(>=|<=|>|<)([\d-]+)$/.exec(v))) {
-      var a = m[2];
-      return m[1] === ">=" ? d >= dnorm(a, false) : m[1] === ">" ? d > dnorm(a, true) : m[1] === "<=" ? d <= dnorm(a, true) : d < dnorm(a, false);
-    }
-    return d.indexOf(v) === 0;
+  function techMatch(n, kind, v) {
+    if (kind === "tech") return TKINDS.some(function (k) { return (k !== "path" || v.indexOf("/") >= 0) && techMatch(n, k, v); });
+    return (n._tech[kind] || []).some(function (x) { return TX.eq(kind, x, v); });
   }
   function fieldMatch(n, f, v) {
     switch (f) {
@@ -590,8 +619,8 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
         if (v === "code") return n._lines.length > 0;
         return false;
       case "p": return numMatch(n.n, v);
-      case "date": return dateMatch(n.date || "", v);
     }
+    if (TKNAME[f] || f === "tech") return techMatch(n, f, v);
     return false;
   }
   function textIn(n, t) {
@@ -632,6 +661,11 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     for (var i = 0; i < groups.length; i++) if (matchGroup(n, groups[i], skip)) return true;
     return false;
   }
+  function techTerms() {
+    var out = [];
+    G.forEach(function (g) { g.forEach(function (t) { if (!t.neg && !t.empty && t.kind === "field" && (TKNAME[t.field] || t.field === "tech")) out.push(t); }); });
+    return out;
+  }
   function termsOf(groups) {
     var out = [];
     groups.forEach(function (g) { g.forEach(function (t) { if (!t.neg && !t.empty && t.kind !== "field") out.push(t); }); });
@@ -669,12 +703,21 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
         }
       } catch (e) { /* a pattern the browser cannot build: skip its highlight */ }
     });
+    techTerms().forEach(function (t) {
+      var kinds = t.field === "tech" ? TKINDS : [t.field];
+      kinds.forEach(function (k) {
+        (n._tech[k] || []).filter(function (x) { return TX.eq(k, x, t.value); }).forEach(function (x) {
+          var src = TX.markRe(k, x); if (!src) return;
+          try { rules.push({ re: new RegExp(src, /^(proto|svc|std|k8s|dns)$/.test(k) ? "g" : "gi"), where: "all" }); } catch (e) { /* skip */ }
+        });
+      });
+    });
     return rules;
   }
   function applies(r, area) { return r.where === "all" || r.where === area || (r.where === "text" && area === "title"); }
   function hlText(raw, rules, area) {
     var rs = rules.filter(function (r) { return applies(r, area); }), rg = [];
-    rs.forEach(function (r) { r.re.lastIndex = 0; var m; while ((m = r.re.exec(raw))) { if (!m[0]) { r.re.lastIndex++; continue; } rg.push([m.index, m.index + m[0].length]); } });
+    rs.forEach(function (r) { r.re.lastIndex = 0; var m; while ((m = r.re.exec(raw))) { if (!m[0]) { r.re.lastIndex++; continue; } var st = m.index + (m[1] ? m[0].length - m[1].length : 0); rg.push([st, m.index + m[0].length]); } });
     if (!rg.length) return esc(raw);
     rg.sort(function (a, b) { return a[0] - b[0]; });
     var merged = [];
@@ -853,7 +896,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
   }
 
   /* ================================================================ state + query edits */
-  var state = { sec: "all", q: "", scope: "all", sort: "best", id: "" };
+  var state = { sec: "all", q: "", scope: "all", sort: "best", id: "", tk: "port" };
   try { var saved = JSON.parse(localStorage.getItem("s0sta-notes-prefs") || "null"); if (saved) { if (saved.scope) state.scope = saved.scope; if (saved.sort) state.sort = saved.sort; } } catch (e) { /* no storage */ }
   function savePrefs() { try { localStorage.setItem("s0sta-notes-prefs", JSON.stringify({ scope: state.scope, sort: state.sort })); } catch (e) { /* no storage */ } }
   var G = [], T = [], HITS = [];
@@ -862,7 +905,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
   function tidy(q) { return q.replace(/\s{2,}/g, " ").replace(/^\s*(OR|\|\|?)\s+/, "").replace(/\s+(OR|\|\|?)\s*$/, "").replace(/\b(OR)(\s+OR)+\b/g, "OR").trim(); }
   function fieldToks(f, positiveOnly) {
     return tokenize(state.q).filter(function (t) {
-      var raw = t.raw, neg = raw[0] === "!", m = /^([A-Za-z]+):(.*)$/.exec(neg ? raw.slice(1) : raw);
+      var raw = t.raw, neg = raw[0] === "!", m = FIELD_RE.exec(neg ? raw.slice(1) : raw);
       if (!m || FIELD[m[1].toLowerCase()] !== f || (positiveOnly && neg)) return false;
       t.value = unq(m[2]).toLowerCase(); return true;
     });
@@ -908,8 +951,9 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     if (t.kind === "code") return ["Code", unq(raw.slice(1))];
     if (t.kind === "opt") return ["Option", raw];
     if (t.kind === "tool") return ["Tool", DISP[t.value] || unq(raw.slice(1))];
-    var m = /^([A-Za-z]+):(.*)$/.exec(raw), val = unq(m[2]);
+    var m = FIELD_RE.exec(raw), val = unq(m[2]);
     if (t.field === "type") { for (var k in TYPES) if (TYPES[k][0] === val.toLowerCase()) val = TYPES[k][1]; }
+    if (TKNAME[t.field] && t.field !== "path" && val) { var lb = TX.label(t.field, val.toLowerCase()); if (lb !== val.toLowerCase() || /^(cve|mitre)$/.test(t.field)) val = lb; }
     return [FIELD_NAME[t.field], val];
   }
   function drawActive() {
@@ -933,7 +977,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
   function facetBtns(f, vals, hideEmpty) {
     var base = DATA.filter(function (n) { return matches(n, G, ORF[f] ? f : null); }), on = activeValues(f);
     return vals.map(function (x) {
-      var v = x[0], label = x[1], c = base.filter(function (n) { return fieldMatch(n, f, v); }).length, isOn = on.indexOf(v.toLowerCase()) >= 0;
+      var v = x[0], label = x[1], lv = String(v).toLowerCase(), c = base.filter(function (n) { return fieldMatch(n, f, lv); }).length, isOn = on.indexOf(lv) >= 0;
       if (hideEmpty && !c && !isOn) return "";
       return '<button type="button" class="ob" data-act="facet" data-f="' + f + '" data-v="' + esc(v) + '" aria-pressed="' + isOn + '"' + (!c && !isOn ? " disabled" : "") + ">" + esc(label) + " <small>" + c + "</small></button>";
     }).join("");
@@ -959,14 +1003,38 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     $("#f-in").innerHTML = facetBtns("in", state.sec === "all" ? [["it", "IT"], ["devsecops", "DevSecOps"], ["both", "In both"]] : [["both", "In both sections"]]);
     var types = {}; DATA.forEach(function (n) { types[n.design] = 1; });
     $("#f-type").innerHTML = facetBtns("type", Object.keys(TYPES).filter(function (k) { return types[k]; }).map(function (k) { return [TYPES[k][0], TYPES[k][1]]; }));
-    $("#f-series").innerHTML = facetBtns("series", Object.keys(SERIES).map(function (k) { return [SERIES[k], k]; }));
+    $("#f-series").innerHTML = facetBtns("series", Object.keys(SERIES).map(function (k) { return [SERIES[k], SERIES_LABEL[k] || k]; }));
+    drawTech();
     var tagTop = countBy(secNotes(), function (n) { return n.tags; }).slice(0, 18);
     $("#f-tag").innerHTML = facetBtns("tag", tagTop.map(function (x) { return [x[0], "#" + x[0]]; }), true) || '<span class="lg" style="margin:0">No hashtag fits these filters.</span>';
-    var pv = fieldToks("p", true)[0], dv = fieldToks("date", true)[0], m;
-    var pf = "", pt = "", df = "", dt = "";
+    var pv = fieldToks("p", true)[0], m;
+    var pf = "", pt = "";
     if (pv) { if ((m = /^(\d+)\s*(?:-|\.\.)\s*(\d+)$/.exec(pv.value))) { pf = m[1]; pt = m[2]; } else if ((m = /^>=?(\d+)$/.exec(pv.value))) pf = m[1]; else if ((m = /^<=?(\d+)$/.exec(pv.value))) pt = m[1]; else if (/^\d+$/.test(pv.value)) pf = pt = pv.value; }
-    if (dv) { if ((m = /^(\d{4}-\d{2})\.\.(\d{4}-\d{2})$/.exec(dv.value))) { df = m[1]; dt = m[2]; } else if ((m = /^>=?(\d{4}-\d{2})$/.exec(dv.value))) df = m[1]; else if ((m = /^<=?(\d{4}-\d{2})$/.exec(dv.value))) dt = m[1]; }
-    [["#p-from", pf], ["#p-to", pt], ["#d-from", df], ["#d-to", dt]].forEach(function (x) { var el = $(x[0]); if (document.activeElement !== el) el.value = x[1]; });
+    [["#p-from", pf], ["#p-to", pt]].forEach(function (x) { var el = $(x[0]); if (document.activeElement !== el) el.value = x[1]; });
+  }
+  /* the tech part of the filter panel: one kind at a time, its values with counts */
+  function techCounts(kind, notes) {
+    var c = {};
+    notes.forEach(function (n) { (n._tech[kind] || []).forEach(function (v) { c[v] = (c[v] || 0) + 1; }); });
+    return c;
+  }
+  function drawTech() {
+    var base = DATA.filter(function (n) { return matches(n, G, null); }), on = activeValues(state.tk);
+    $("#f-tk").innerHTML = TKINDS.map(function (k) {
+      var c = base.filter(function (n) { return (n._tech[k] || []).length; }).length;
+      return '<button type="button" data-act="tk" data-v="' + k + '" aria-pressed="' + (state.tk === k) + '">' + esc(TKNAME[k]) + " <small>" + c + "</small></button>";
+    }).join("");
+    var cnt = techCounts(state.tk, base), all = techCounts(state.tk, secNotes()), f = ($("#tfind").value || "").trim().toLowerCase();
+    var numeric = /^(port|http|event)$/.test(state.tk);
+    var vals = Object.keys(all).filter(function (v) { return !f || TX.label(state.tk, v).toLowerCase().indexOf(f) >= 0 || TX.aliases(state.tk, v).some(function (a) { return a.indexOf(f) >= 0; }); });
+    vals.sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || (all[b] - all[a]) || (numeric ? +a - +b : a.localeCompare(b)); });
+    var shown = vals.slice(0, f ? 80 : 40);
+    var html = shown.map(function (v) {
+      var c = cnt[v] || 0, isOn = on.indexOf(v.toLowerCase()) >= 0;
+      return '<button type="button" class="ob" data-act="facet" data-f="' + state.tk + '" data-v="' + esc(v) + '" aria-pressed="' + isOn + '"' + (!c && !isOn ? " disabled" : "") + ">" + esc(TX.label(state.tk, v)) + " <small>" + c + "</small></button>";
+    }).join("");
+    if (vals.length > shown.length) html += '<span class="lg" style="margin:6px 0 0">+ ' + (vals.length - shown.length) + " more. Type in the box to find them.</span>";
+    $("#f-tech").innerHTML = html || '<span class="lg" style="margin:0">Nothing here for these filters.</span>';
   }
   function drawList() {
     var list = $("#list");
@@ -1015,9 +1083,6 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
 
   /* ================================================================ note */
   var hit = 0;
-  function fmtDate(d) {
-    try { return new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return d; }
-  }
   function openNote(id, read, keep) {
     var n = BYID[id]; if (!n) return;
     var y = window.scrollY;
@@ -1026,13 +1091,14 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     $("#note").innerHTML = '<button type="button" class="back" data-act="back">← ' + (G.length ? "Results" : "All notes") + "</button>" +
       '<div class="hits" hidden><span>Match <b id="hitpos"></b></span><span class="sp"></span>' +
       '<button type="button" data-act="prevhit" aria-label="Previous match">↑</button><button type="button" data-act="nexthit" aria-label="Next match">↓</button></div>' +
-      '<div class="nmeta"><span class="badge">' + esc(n.topic) + "</span><span>LinkedIn P" + n.n + " · " + esc(n.series_name) + " series" + (n.date ? " · " + fmtDate(n.date) : "") + "</span></div>" +
+      '<div class="nmeta"><span class="badge">' + esc(n.topic) + "</span><span>Post P" + n.n + " · " + esc(SERIES_LABEL[n.series_name] || n.series_name) + " series</span></div>" +
       '<h2 class="ttl">' + esc(n.title) + "</h2>" +
       '<div class="actions"><button type="button" class="btn dark" data-act="copycmds">Copy all commands</button><button type="button" class="btn" data-act="copynote">Copy the note (Markdown)</button></div>' +
+      techRow(n, false) +
       '<div class="md">' + render(n.md) + "</div>" +
       '<div class="tags">' + n.tags.map(function (t) { return '<button type="button" data-act="ex" data-ex="tag:' + esc(t) + '" title="Show notes with this hashtag">#' + esc(t) + "</button>"; }).join("") + "</div>" +
       '<p class="nmeta" style="margin-top:10px"><span class="where-url">' + esc(url) + "</span></p>";
-    var hasCmd = $$("#note .code").some(function (b) { return !/^(python|text)$/.test(b.dataset.lang) && b.querySelector(".ln:not(.cm) .tx"); });
+    var hasCmd = $$("#note .code").some(function (b) { return !/^(python|text)$/.test(b.dataset.lang) && !isScript(b) && b.querySelector(".ln:not(.cm) .tx"); });
     $('#note [data-act="copycmds"]').hidden = !hasCmd;
     markDom($("#note"), rulesFor(n, T));
     $$(".item button").forEach(function (b) { b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"); });
@@ -1043,6 +1109,22 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       try { history.replaceState(null, "", "#" + id); } catch (e) { /* sandboxed */ }
       if (phone() && !$$("#note mark").length) window.scrollTo(0, $("#wrap").offsetTop - 8);
     }
+  }
+  function isScript(box) {
+    var hs = $$("#note .md h2, #note .md h3.sec").filter(function (h) { return /^Script/i.test(h.textContent.trim()); });
+    return hs.some(function (h) { return !!(h.compareDocumentPosition(box) & Node.DOCUMENT_POSITION_FOLLOWING); });
+  }
+  function techRow(n, all) {
+    var items = [];
+    TKINDS.forEach(function (k) { (n._tech[k] || []).forEach(function (v) { items.push([k, v]); }); });
+    if (!items.length) return "";
+    var max = all ? items.length : 14, html = '<div class="techrow" id="techrow"><span class="lg2">Tech</span>';
+    items.slice(0, max).forEach(function (x) {
+      html += '<button type="button" data-act="facet" data-f="' + x[0] + '" data-v="' + esc(x[1]) + '" title="All notes with ' + esc(FIELD_NAME[x[0]] + " " + TX.label(x[0], x[1])) + '"><span class="k">' +
+        esc(x[0]) + "</span>" + esc(x[0] === "path" ? x[1] : TX.label(x[0], x[1])) + "</button>";
+    });
+    if (items.length > max) html += '<button type="button" class="more" data-act="techall">+ ' + (items.length - max) + " more</button>";
+    return html + "</div>";
   }
   function setupHits(scroll) {
     var marks = $$("#note mark"), bar = $("#note .hits");
@@ -1065,7 +1147,8 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
   var TIPS = [["@", "Tool", "notes that use a tool: @kubectl"], ["#", "Code", "only inside code: #lvextend"], ["--", "Option", "a command option: --previous, -r"],
     ['"', "Phrase", 'exact words: "disk full"'], ["topic:", "Topic", ""], ["type:", "Note type", "commands, checklist, quiz…"], ["tag:", "Hashtag", "a LinkedIn hashtag"],
     ["series:", "Series", "linux, it, cloud, data…"], ["has:", "Has", "script, commands, quiz, table"], ["in:", "Section", "it, devsecops, both"],
-    ["p:", "Post number", "p:72-120"], ["date:", "LinkedIn date", "date:2027-03"], ["!", "Without", "!@docker"], ["OR ", "Either", "@helm OR @kustomize"]];
+    ["p:", "Post number", "p:72-120"], ["port:", "Port", "port:443, port:ssh, port:8000-8999"], ["proto:", "Protocol", "proto:tls"], ["svc:", "Cloud service", "svc:s3"],
+    ["k8s:", "Kubernetes object", "k8s:ingress"], ["path:", "Path", "path:/etc/ssh"], ["tech:", "Any tech", "tech:ssh"], ["!", "Without", "!@docker"], ["OR ", "Either", "@helm OR @kustomize"]];
   function tokAt() {
     var q = input.value, caret = input.selectionStart == null ? q.length : input.selectionStart, start = 0, inQ = false;
     for (var i = 0; i < caret; i++) { if (q[i] === '"') inQ = !inQ; else if (!inQ && /\s/.test(q[i])) start = i + 1; }
@@ -1088,8 +1171,27 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       var ns = DATA.filter(function (n) { return n.series_name === k; }).map(function (n) { return n.n; });
       return { v: Math.min.apply(null, ns) + "-" + Math.max.apply(null, ns), d: Math.min.apply(null, ns) + "-" + Math.max.apply(null, ns) + "  " + k, c: ns.length };
     });
-    if (f === "date") return countBy(notes, function (n) { return n.date ? [n.date.slice(0, 4)] : []; }).sort(function (a, b) { return a[0].localeCompare(b[0]); }).map(function (x) { return { v: x[0], c: x[1] }; });
+    if (TKNAME[f]) {
+      var c = techCounts(f, notes);
+      return Object.keys(c).sort(function (a, b) { return c[b] - c[a] || a.localeCompare(b); }).map(function (v) { return { v: v, d: TX.label(f, v), c: c[v], a: TX.aliases(f, v) }; });
+    }
     return [];
+  }
+  /* tech values that fit what the user typed: [{k, v, d, c}] */
+  function techValues(notes, p, max) {
+    var out = [];
+    TKINDS.forEach(function (k) {
+      var c = techCounts(k, notes);
+      Object.keys(c).forEach(function (v) {
+        if (p && !TX.aliases(k, v).some(function (a) { return a.indexOf(p) === 0; }) && !(k === "path" && p.length > 2 && v.toLowerCase().indexOf(p) >= 0)) return;
+        out.push({ k: k, v: v, d: TX.label(k, v), c: c[v] });
+      });
+    });
+    out.sort(function (a, b) { return b.c - a.c; });
+    return out.slice(0, max);
+  }
+  function techItem(x, neg, p) {
+    return { g: "Tech", l: '<span class="k">' + x.k + ":</span>" + mk(x.k === "path" ? x.v : x.d, p), h: x.k === "path" ? "" : FIELD_NAME[x.k], c: x.c, ins: neg + x.k + ":" + quoteVal(String(x.v)) + " " };
   }
   function buildSugg(force) {
     if (document.activeElement !== input) return closeSugg();
@@ -1119,17 +1221,24 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       countBy(notes, function (n) { return n._starts; }).filter(function (x) { return !p || x[0].indexOf(p) >= 0; }).slice(0, 9).forEach(function (x) {
         items.push({ g: "Commands in the notes", l: "#" + mk(x[0], p), c: x[1], ins: neg + "#" + quoteVal(x[0]) + " " });
       });
-    } else if ((m = /^([A-Za-z]+):(.*)$/.exec(raw)) && FIELD[m[1].toLowerCase()]) {
+    } else if ((m = FIELD_RE.exec(raw)) && FIELD[m[1].toLowerCase()]) {
       var f = FIELD[m[1].toLowerCase()]; p = unq(m[2]).toLowerCase();
-      fieldValues(f, notes).filter(function (x) { return !p || String(x.v).toLowerCase().indexOf(p) >= 0 || (x.d && x.d.toLowerCase().indexOf(p) >= 0); }).slice(0, 12).forEach(function (x) {
-        items.push({ g: FIELD_NAME[f], l: '<span class="k">' + esc(m[1].toLowerCase()) + ":</span>" + mk(x.d || x.v, p), c: x.c, ins: neg + f + ":" + quoteVal(String(x.v)) + " " });
-      });
+      if (f === "tech") {
+        if (p) items.push({ g: "Tech", l: '<span class="k">tech:</span>' + esc(p), h: "anything with this name", ins: neg + "tech:" + quoteVal(p) + " " });
+        techValues(notes, p, 12).forEach(function (x) { items.push(techItem(x, neg, p)); });
+      } else {
+        if (f === "port" && /^\d+\s*-\s*\d+$/.test(p)) items.push({ g: FIELD_NAME[f], l: '<span class="k">port:</span>' + esc(p), h: "a range of ports", ins: neg + "port:" + p.replace(/\s+/g, "") + " " });
+        fieldValues(f, notes).filter(function (x) { return !p || String(x.v).toLowerCase().indexOf(p) >= 0 || (x.d && x.d.toLowerCase().indexOf(p) >= 0) || (x.a && x.a.some(function (a) { return a.indexOf(p) === 0; })); }).slice(0, TKNAME[f] ? 14 : 12).forEach(function (x) {
+          items.push({ g: FIELD_NAME[f], l: '<span class="k">' + esc(m[1].toLowerCase()) + ":</span>" + mk(f === "path" ? x.v : (x.d || x.v), p), c: x.c, ins: neg + f + ":" + quoteVal(String(x.v)) + " " });
+        });
+      }
     } else {
       p = raw.toLowerCase();
-      Object.keys(FIELD).filter(function (k) { return k.indexOf(p) === 0 && k !== p && k !== "is" && k !== "post"; }).forEach(function (k) {
+      FIELD_SHOW.filter(function (k) { return k.indexOf(p) === 0 && k !== p; }).forEach(function (k) {
         items.push({ g: "Filters", l: '<span class="k">' + esc(k) + ":</span>", h: FIELD_HINT[FIELD[k]], ins: neg + k + ":", keep: true });
       });
       if (p.length >= 2) {
+        techValues(notes, p, /^\d+$/.test(p) ? 5 : 4).forEach(function (x) { items.push(techItem(x, neg, p)); });
         countBy(notes, function (n) { return n._tools; }).filter(function (x) { return x[0].indexOf(p) === 0; }).slice(0, 3).forEach(function (x) {
           items.push({ g: "Tools", l: "@" + mk(DISP[x[0]] || x[0], p), c: x[1], ins: neg + "@" + x[0] + " " });
         });
@@ -1215,12 +1324,8 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     var a = $("#p-from").value.trim(), b = $("#p-to").value.trim();
     setField("p", a && b ? a + "-" + b : a ? ">=" + a : b ? "<=" + b : "");
   }
-  function dateChanged() {
-    var a = $("#d-from").value, b = $("#d-to").value;
-    setField("date", a && b ? a + ".." + b : a ? ">=" + a : b ? "<=" + b : "");
-  }
   $("#p-from").addEventListener("change", rangeChanged); $("#p-to").addEventListener("change", rangeChanged);
-  $("#d-from").addEventListener("change", dateChanged); $("#d-to").addEventListener("change", dateChanged);
+  $("#tfind").addEventListener("input", function () { drawTech(); });
   function togglePanel(id, btn, other, otherBtn) {
     closeSugg();
     var open = $(id).hidden; $(id).hidden = !open; $(btn).setAttribute("aria-expanded", String(open));
@@ -1240,6 +1345,8 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
     switch (a) {
       case "topic": if (t.dataset.v) toggleField("topic", t.dataset.v); else setQuery(cutToks(fieldToks("topic", true))); $("#wrap").classList.remove("reading"); return;
       case "facet": toggleField(t.dataset.f, t.dataset.v); return;
+      case "tk": state.tk = t.dataset.v; $("#tfind").value = ""; drawTech(); return;
+      case "techall": if (n) { var tr = $("#techrow"); if (tr) tr.outerHTML = techRow(n, true); } return;
       case "scope": state.scope = t.dataset.v; savePrefs(); runNow(); return;
       case "rm": setQuery(tidy(state.q.slice(0, +t.dataset.s) + state.q.slice(+t.dataset.e))); return;
       case "clearq": setQuery(""); $("#wrap").classList.remove("reading"); if (!phone()) input.focus(); return;
@@ -1257,7 +1364,7 @@ mark.cur { background: var(--mark-cur); color: var(--ink); box-shadow: 0 0 0 2px
       case "copynote": if (n) copy(n.md, "Note copied as Markdown"); return;
       case "copycmds":
         var cmds = [];
-        $$("#note .code").forEach(function (b) { if (/^(python|text)$/.test(b.dataset.lang)) return; $$(".ln:not(.cm) .tx", b).forEach(function (x) { if (x.textContent.trim()) cmds.push(x.textContent); }); });
+        $$("#note .code").forEach(function (b) { if (/^(python|text)$/.test(b.dataset.lang) || isScript(b)) return; $$(".ln:not(.cm) .tx", b).forEach(function (x) { if (x.textContent.trim()) cmds.push(x.textContent); }); });
         copy(cmds.join("\n"), cmds.length + " commands copied"); return;
     }
   });

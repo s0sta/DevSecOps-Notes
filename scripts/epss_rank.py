@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""Rank findings by exploit evidence, then by severity.
+
+Joins a findings export (JSON) with the FIRST EPSS scores export (CSV or CSV.GZ)
+and the CISA KEV catalog (CSV, or one CVE per line). A CVE in KEV ranks first.
+Everything else ranks by EPSS score times an exposure multiplier for the asset.
+Every number that produced a rank is printed beside it.
+
+    python3 epss_rank.py findings.json epss_scores.csv kev.csv --top 20
+    python3 epss_rank.py findings.json epss.csv kev.csv --exposure ex.json
+
+Nightly, after the EPSS export is refreshed:
+
+    0 4 * * * python3 epss_rank.py findings.json epss.csv kev.csv --top 20
+
+The default --cvss-floor of 7.0 is a policy threshold, not a standard: it is
+the line above which a finding with no EPSS score is called unrankable.
+
+Exit codes: 0 every high-CVSS finding was ranked, 1 at least one high-CVSS
+finding has no EPSS score and is not in KEV, 2 bad input.
+
+By s0sta.com
+"""
+import argparse
+import csv
+import gzip
+import json
+import sys
+
+
+def die(msg):
+    sys.stderr.write("epss_rank: %s\n" % msg)
+    raise SystemExit(2)
+
+
+def open_text(path):
+    if path.endswith(".gz"):
+        return gzip.open(path, "rt", encoding="utf-8", errors="replace")
+    return open(path, encoding="utf-8", errors="replace")
+
+
+def load_findings(path):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, ValueError) as exc:
+        die("cannot read findings %s: %s" % (path, exc))
+    if isinstance(data, dict):
+        data = data.get("findings", data.get("results", []))
+    if not isinstance(data, list):
+        die("findings must be a JSON list, got %s" % type(data).__name__)
+    out = []
+    for i, f in enumerate(data):
+        if not isinstance(f, dict):
+            die("finding %d is not an object" % i)
+        cve = str(f.get("cve", "")).strip().upper()
+        if not cve.startswith("CVE-"):
+            die("finding %d has no cve field" % i)
+        if f.get("cvss") is None:
+            die("finding %d (%s) has no cvss field" % (i, cve))
+        try:
+            cvss = float(f["cvss"])
+        except (TypeError, ValueError):
+            die("finding %d (%s) has a non-numeric cvss" % (i, cve))
+        if not 0.0 <= cvss <= 10.0:
+            die("finding %d (%s) cvss out of range" % (i, cve))
+        out.append({
+            "cve": cve,
+            "cvss": cvss,
+            "package": str(f.get("package", "") or "-"),
+            "asset": str(f.get("asset", "") or "-"),
+        })
+    return out
+
+
+def load_epss(path):
+    """FIRST export: optional # comment line, then cve,epss,percentile."""
+    scores = {}
+    try:
+        fh = open_text(path)
+    except OSError as exc:
+        die("cannot read EPSS export %s: %s" % (path, exc))
+    with fh:
+        for row in csv.reader(fh):
+            if not row:
+                continue
+            first = row[0].strip()
+            if not first or first.startswith("#"):
+                continue
+            if first.lower() in ("cve", "cveid", "cve_id"):
+                continue
+            if len(row) < 2 or not first.upper().startswith("CVE-"):
+                continue
+            try:
+                score = float(row[1])
+            except ValueError:
+                continue
+            if not 0.0 <= score <= 1.0:
+                continue
+            pct = None
+            if len(row) > 2:
+                try:
+                    pct = float(row[2])
+                except ValueError:
+                    pct = None
+            scores[first.upper()] = (score, pct)
+    if not scores:
+        die("no EPSS scores in %s" % path)
+    return scores
+
+
+def load_kev(path):
+    """CISA catalog CSV with a CVE column, or a plain list, one CVE per line."""
+    kev = set()
+    try:
+        fh = open_text(path)
+    except OSError as exc:
+        die("cannot read KEV list %s: %s" % (path, exc))
+    with fh:
+        rows = csv.reader(fh)
+        idx = 0
+        for row in rows:
+            if not row:
+                continue
+            first = row[0].strip()
+            if not first or first.startswith("#"):
+                continue
+            names = [c.strip().lower() for c in row]
+            if any(name in ("cve", "cveid", "cve_id") for name in names):
+                for i, name in enumerate(names):
+                    if name in ("cve", "cveid", "cve_id"):
+                        idx = i
+                        break
+                continue
+            if len(row) > idx:
+                cve = row[idx].strip().upper()
+                if cve.startswith("CVE-"):
+                    kev.add(cve)
+    if not kev:
+        die("no CVE entries in KEV list %s" % path)
+    return kev
+
+
+def load_exposure(path):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, ValueError) as exc:
+        die("cannot read exposure map %s: %s" % (path, exc))
+    if isinstance(data, dict) and "assets" in data:
+        data = data["assets"]
+    if not isinstance(data, dict):
+        die("exposure map must be a JSON object of asset -> multiplier")
+    out = {}
+    for asset, value in data.items():
+        try:
+            mult = float(value)
+        except (TypeError, ValueError):
+            die("exposure for %s is not a number" % asset)
+        if mult <= 0:
+            die("exposure for %s must be greater than zero" % asset)
+        out[str(asset)] = mult
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        description="Rank findings by KEV, then EPSS x exposure.")
+    ap.add_argument("findings", help="findings export (JSON)")
+    ap.add_argument("epss", help="EPSS scores export (CSV or CSV.GZ)")
+    ap.add_argument("kev", help="KEV catalog (CSV) or one CVE per line")
+    ap.add_argument("--top", type=int, default=20,
+                    help="how many ranked findings to print (default 20)")
+    ap.add_argument("--cvss-floor", type=float, default=7.0,
+                    help="policy line for high CVSS (default 7.0)")
+    ap.add_argument("--exposure", help="JSON object: asset -> multiplier")
+    ap.add_argument("--json", action="store_true", help="print JSON, not text")
+    args = ap.parse_args(argv)
+
+    if args.top < 1:
+        die("--top must be at least 1")
+    if not 0.0 <= args.cvss_floor <= 10.0:
+        die("--cvss-floor must be between 0 and 10")
+
+    findings = load_findings(args.findings)
+    epss = load_epss(args.epss)
+    kev = load_kev(args.kev)
+    exposure = load_exposure(args.exposure) if args.exposure else {}
+
+    rows = []
+    for f in findings:
+        score, pct = epss.get(f["cve"], (None, None))
+        mult = exposure.get(f["asset"], 1.0)
+        rows.append({
+            "cve": f["cve"],
+            "cvss": f["cvss"],
+            "package": f["package"],
+            "asset": f["asset"],
+            "kev": f["cve"] in kev,
+            "epss": score,
+            "percentile": pct,
+            "exposure": mult,
+            "rank": None if score is None else round(score * mult, 6),
+        })
+
+    def order(row):
+        rank = -1.0 if row["rank"] is None else row["rank"]
+        return (0 if row["kev"] else 1, -rank, -row["cvss"], row["cve"])
+
+    ranked = sorted(rows, key=order)
+    shown = ranked[:args.top]
+    unranked = [r for r in ranked
+                if r["rank"] is None and not r["kev"]
+                and r["cvss"] >= args.cvss_floor]
+    kev_hits = [r for r in ranked if r["kev"]]
+
+    if args.json:
+        print(json.dumps({
+            "counts": {"findings": len(rows), "kev": len(kev_hits),
+                       "shown": len(shown), "unranked": len(unranked)},
+            "policy": {"cvss_floor": args.cvss_floor,
+                       "exposure_default": 1.0},
+            "top": shown,
+            "unranked": unranked,
+        }, indent=2))
+        return 1 if unranked else 0
+
+    print("POLICY cvss-floor %.1f, exposure default 1.0" % args.cvss_floor)
+    print("RANK %d shown of %d findings (%d in KEV)"
+          % (len(shown), len(rows), len(kev_hits)))
+    for i, r in enumerate(shown, 1):
+        epss_txt = "-" if r["epss"] is None else "%.3f" % r["epss"]
+        rank_txt = "-" if r["rank"] is None else "%.3f" % r["rank"]
+        print("%3d %-3s %-16s cvss %4.1f epss %5s x%.2f = %-6s %s %s"
+              % (i, "KEV" if r["kev"] else "", r["cve"], r["cvss"],
+                 epss_txt, r["exposure"], rank_txt, r["asset"], r["package"]))
+    for r in unranked:
+        print("UNRANKED %-16s cvss %4.1f %s %s no EPSS score"
+              % (r["cve"], r["cvss"], r["asset"], r["package"]))
+    print("SUMMARY %d finding%s, %d in KEV, %d unranked high CVSS"
+          % (len(rows), "" if len(rows) == 1 else "s",
+             len(kev_hits), len(unranked)))
+    return 1 if unranked else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

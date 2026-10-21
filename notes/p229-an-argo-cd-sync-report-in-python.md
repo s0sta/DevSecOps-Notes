@@ -17,7 +17,7 @@ A sync dashboard is fine until you need a number for a change record. Then you a
 
 ## Quick reference
 
-The full script is at the end of this note: **argocd_report.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `argocd_report.py` (standard library only, no `pip install`).
 
 **Run it**
 

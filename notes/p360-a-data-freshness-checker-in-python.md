@@ -17,7 +17,7 @@ The orders table stopped updating at 2am and the dashboard looks normal, because
 
 ## Quick reference
 
-The full script is at the end of this note: **freshness_check.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `freshness_check.py` (standard library only, no `pip install`).
 
 **Run it**
 

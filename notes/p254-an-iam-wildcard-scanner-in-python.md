@@ -17,7 +17,7 @@ An IAM policy can grant every action on every resource in one line. Most teams f
 
 ## Quick reference
 
-The full script is at the end of this note: **iam_wildcard.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `iam_wildcard.py` (standard library only, no `pip install`).
 
 **Run it**
 

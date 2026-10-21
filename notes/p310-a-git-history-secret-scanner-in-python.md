@@ -17,7 +17,7 @@ The key was removed in a later commit, so the repository looks clean. It is stil
 
 ## Quick reference
 
-The full script is at the end of this note: **git_secret_history.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `git_secret_history.py` (standard library only, no `pip install`).
 
 **Run it**
 
