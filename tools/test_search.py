@@ -36,10 +36,11 @@ with sync_playwright() as p:
         R["queries"][text] = {"n": n, "first": items, "chips": chips}
         return n
 
-    for text in ["", "@kubectl", "#lvextend", "--previous", "-r", "-rf", "topic:kubernetes --dry-run", "type:quiz", "has:script", "p:72-91", "date:2027",
+    for text in ["", "@kubectl", "#lvextend", "--previous", "-r", "-rf", "topic:kubernetes --dry-run", "type:quiz", "has:script", "p:72-91", "port:443", "port:ssh", "port:5000-6000", "proto:tls", "svc:s3", "k8s:networkpolicy", "std:cvss", "dns:cname", "http:5xx", "http:403",
+                 "event:4625", "mitre:t1059", "cve:2024-3400", "path:/etc/ssh", "path:/var/log", "tech:ssh", "tech:443", "port:443 topic:networking", "series:ir", "series:asm",
                  "@kubectl !@helm", "@helm", "@kustomize", "@helm OR @kustomize", '"disk full"', "series:data", "in:both", "tag:kubernetes",
                  'topic:"Docker & containers" type:commands', "restart", "nginx reload", "@Get-ADUser", "@sql", "has:quiz type:quiz", "!has:commands",
-                 "date:2027-03..2027-08", "p:>360", "series:linux", "series:linux-it", "@kube", "#\"kubectl logs\"", "tag:linux"]:
+                 "p:>360", "series:linux", "series:linux-it", "@kube", "#\"kubectl logs\"", "tag:linux"]:
         q(text)
     # scope: restart in code only
     q("restart")
@@ -70,6 +71,18 @@ with sync_playwright() as p:
     pg.wait_for_timeout(120)
     R["with_p_from"] = pg.input_value("#q")
     pg.screenshot(path=str(shots / "s-desk-adv.png"))
+    # the tech part of the panel
+    pg.click('[data-act="reset"]'); pg.wait_for_timeout(120)
+    R["tech_kinds"] = pg.eval_on_selector_all("#f-tk button", "els => els.map(e => e.innerText.replace(/\\s+/g,' '))")
+    R["tech_ports_first"] = pg.eval_on_selector_all("#f-tech .ob", "els => els.slice(0,6).map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.click('#f-tk [data-v="proto"]'); pg.wait_for_timeout(120)
+    pg.click('#f-tech .ob >> nth=0'); pg.wait_for_timeout(150)
+    R["tech_chip_query"] = pg.input_value("#q")
+    pg.click('#f-tk [data-v="path"]'); pg.wait_for_timeout(120)
+    pg.fill("#tfind", "ssh"); pg.wait_for_timeout(150)
+    R["tech_find_ssh_paths"] = pg.eval_on_selector_all("#f-tech .ob", "els => els.map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.screenshot(path=str(shots / "s-desk-tech.png"))
+    pg.fill("#tfind", "")
     # remove a chip
     pg.click("#active .fchip:first-child button")
     pg.wait_for_timeout(120)
@@ -97,6 +110,19 @@ with sync_playwright() as p:
     pg.wait_for_timeout(150)
     R["sugg_topic"] = pg.eval_on_selector_all("#sugg .opt .l", "els => els.slice(0,4).map(e => e.textContent)")
     pg.keyboard.press("Escape")
+    pg.fill("#q", ""); pg.type("#q", "443", delay=30); pg.wait_for_timeout(150)
+    R["sugg_443"] = pg.eval_on_selector_all("#sugg .opt", "els => els.slice(0,5).map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.fill("#q", ""); pg.type("#q", "port:", delay=30); pg.wait_for_timeout(150)
+    R["sugg_port"] = pg.eval_on_selector_all("#sugg .opt", "els => els.slice(0,5).map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.screenshot(path=str(shots / "s-desk-sugg-port.png"))
+    pg.fill("#q", ""); pg.type("#q", "tech:ss", delay=30); pg.wait_for_timeout(150)
+    R["sugg_tech_ss"] = pg.eval_on_selector_all("#sugg .opt", "els => els.slice(0,6).map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.keyboard.press("Escape")
+    pg.fill("#q", "port:5432"); pg.wait_for_timeout(150); pg.keyboard.press("Escape")
+    pg.click(".item button >> nth=0"); pg.wait_for_timeout(400)
+    R["port_marks"] = pg.eval_on_selector_all("#note mark", "els => els.slice(0,4).map(e => e.textContent)")
+    R["tech_row"] = pg.eval_on_selector_all("#techrow button", "els => els.slice(0,8).map(e => e.innerText.replace(/\\s+/g,' '))")
+    pg.screenshot(path=str(shots / "s-desk-note-port.png"))
     pg.fill("#q", "kubectl --previous")
     pg.wait_for_timeout(150)
     pg.keyboard.press("Escape")
