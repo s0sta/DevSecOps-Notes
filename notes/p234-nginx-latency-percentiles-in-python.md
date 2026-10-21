@@ -17,7 +17,7 @@ Your nginx access log already holds the latency data you need. You do not need a
 
 ## Quick reference
 
-The full script is at the end of this note: **log_latency.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `log_latency.py` (standard library only, no `pip install`).
 
 **Run it**
 

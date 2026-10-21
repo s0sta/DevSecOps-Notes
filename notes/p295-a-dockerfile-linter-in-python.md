@@ -17,7 +17,7 @@ Every Dockerfile review produces the same six comments, and they are mechanical 
 
 ## Quick reference
 
-The full script is at the end of this note: **dockerfile_lint.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `dockerfile_lint.py` (standard library only, no `pip install`).
 
 **Run it**
 

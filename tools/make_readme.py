@@ -8,14 +8,14 @@ from collections import defaultdict
 REPOS = {
     "it": {
         "name": "IT-Notes", "title": "IT notes", "other": "DevSecOps-Notes",
-        "intro": "Practical IT notes from my LinkedIn posts: Linux, Windows, networks, storage, web servers, databases and security.",
+        "intro": "Practical IT notes from my LinkedIn posts: Linux, Windows, networks and DNS, storage, web servers, databases, Bash and Python checks, security and incident response.",
         "other_line": "Cloud, containers, Kubernetes, CI/CD and security automation are in **[DevSecOps-Notes](https://github.com/s0sta/DevSecOps-Notes)**.",
         "alt": "s0sta IT notes: commands and checklists you can copy and run",
         "example": "`lvextend` or `journalctl`",
     },
     "devsecops": {
         "name": "DevSecOps-Notes", "title": "DevSecOps notes", "other": "IT-Notes",
-        "intro": "Practical DevSecOps notes from my LinkedIn posts: Docker, Kubernetes, Terraform, CI/CD, cloud, observability and security.",
+        "intro": "Practical DevSecOps notes from my LinkedIn posts: Docker, Kubernetes, Terraform, CI/CD, cloud, observability, application and supply-chain security, incident response and vulnerability management.",
         "other_line": "Linux, Windows, networks, storage and databases are in **[IT-Notes](https://github.com/s0sta/IT-Notes)**.",
         "alt": "s0sta DevSecOps notes: commands and checklists you can copy and run",
         "example": "`kubectl logs` or `terraform plan`",
@@ -51,7 +51,10 @@ def build(repo, section):
         fm["n"] = int(re.sub(r"\D", "", fm.get("id", "0")) or 0)
         notes.append(fm)
     notes.sort(key=lambda x: x["n"])
-    scripts = sorted(x.name for x in (repo / "scripts").glob("*.py")) if (repo / "scripts").is_dir() else []
+    scripts = sorted(x.name for pat in ("*.py", "*.sh") for x in (repo / "scripts").glob(pat)) if (repo / "scripts").is_dir() else []
+    n_py = sum(s.endswith(".py") for s in scripts)
+    n_sh = len(scripts) - n_py
+    script_words = f"{n_py} Python" + (f" + {n_sh} Bash" if n_sh else "")
     by = defaultdict(list)
     for n in notes:
         by[n.get("topic", "Other")].append(n)
@@ -72,7 +75,7 @@ def build(repo, section):
 
 | Notes | Topics | Scripts |
 |:--|:--|:--|
-| **{len(notes)}** | **{len(by)}** | **{len(scripts)}** Python scripts, standard library only |
+| **{len(notes)}** | **{len(by)}** | **{len(scripts)}** ({script_words}), no extra packages |
 
 {cfg['other_line']} The {both} notes that fit both are in both repos.
 
@@ -109,7 +112,7 @@ Then the parts: **Quick reference** (commands, checklists, tables), **Explained*
 
 ```text
 notes/     {len(notes)} notes, one Markdown file each (p072-....md)
-scripts/   {len(scripts)} Python scripts from the posts{tools_line}
+scripts/   {len(scripts)} scripts from the posts ({script_words}){tools_line}
 ```
 
 ---

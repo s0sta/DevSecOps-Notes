@@ -17,7 +17,7 @@ DevSecOps means shifting security left, catching problems before they ship. This
 
 ## Quick reference
 
-The full script is at the end of this note: **secret_scanner.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `secret_scanner.py` (standard library only, no `pip install`).
 
 **Run it**
 

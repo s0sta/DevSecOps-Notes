@@ -17,7 +17,7 @@ Kubernetes phase, CKA on the horizon. kubectl get pods is fine for 10 pods and u
 
 ## Quick reference
 
-The full script is at the end of this note: **pod_health.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `pod_health.py` (standard library only, no `pip install`).
 
 **Run it**
 

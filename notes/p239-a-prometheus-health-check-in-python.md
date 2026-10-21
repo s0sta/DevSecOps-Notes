@@ -17,7 +17,7 @@ A Grafana dashboard is on the wall screen and nobody has looked at it since Tues
 
 ## Quick reference
 
-The full script is at the end of this note: **prom_check.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `prom_check.py` (standard library only, no `pip install`).
 
 **Run it**
 

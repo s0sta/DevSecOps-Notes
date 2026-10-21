@@ -25,7 +25,7 @@ for f in sorted((out / "notes").glob("*.md")):
             used.add(fm["script"])
             (dest / "scripts").mkdir(exist_ok=True)
             shutil.copy(out / "scripts" / fm["script"], dest / "scripts" / fm["script"])
-for s in sorted((out / "scripts").glob("*.py")):
+for s in sorted(list((out / "scripts").glob("*.py")) + list((out / "scripts").glob("*.sh"))):
     if s.name not in used:
         for dest in repos.values():
             (dest / "scripts").mkdir(exist_ok=True)

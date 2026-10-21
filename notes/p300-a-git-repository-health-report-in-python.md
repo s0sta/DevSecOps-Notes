@@ -17,7 +17,7 @@ One person knows where the deploy scripts live, and they are on holiday. A repos
 
 ## Quick reference
 
-The full script is at the end of this note: **git_health.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `git_health.py` (standard library only, no `pip install`).
 
 **Run it**
 

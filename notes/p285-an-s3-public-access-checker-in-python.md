@@ -17,7 +17,7 @@ A bucket is public for two reasons that have nothing to do with each other: its 
 
 ## Quick reference
 
-The full script is at the end of this note: **s3_public_check.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `s3_public_check.py` (standard library only, no `pip install`).
 
 **Run it**
 

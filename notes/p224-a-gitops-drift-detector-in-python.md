@@ -17,7 +17,7 @@ GitOps has one promise: what is in Git is what runs in the cluster. Drift is whe
 
 ## Quick reference
 
-The full script is at the end of this note: **drift_check.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `drift_check.py` (standard library only, no `pip install`).
 
 **Run it**
 

@@ -17,7 +17,7 @@ The invoice says the cluster ran all month. The cards tell a different story: a 
 
 ## Quick reference
 
-The full script is at the end of this note: **gpu_report.py** (standard library only, no `pip install`).
+The full script is at the end of this note: `gpu_report.py` (standard library only, no `pip install`).
 
 **Run it**
 
